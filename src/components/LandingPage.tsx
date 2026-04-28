@@ -26,7 +26,7 @@ export function LandingPage({ onStartBooking }: { onStartBooking: () => void }) 
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
               <Sparkles size={24} />
             </div>
-            <span className="text-xl font-bold tracking-tight">BinFresh</span>
+            <span className="text-xl font-bold tracking-tight">CleanBinSolutions</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#features" className="hover:text-primary transition-colors">Features</a>
@@ -125,7 +125,7 @@ export function LandingPage({ onStartBooking }: { onStartBooking: () => void }) 
       <section id="features" className="py-20 bg-muted/30 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-5xl font-bold mb-4">Why Choose BinFresh?</h2>
+            <h2 className="text-3xl lg:text-5xl font-bold mb-4">Why Choose CleanBinSolutions?</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
               We've perfected the art of bin cleaning with our specialized high-pressure equipment and eco-friendly solutions.
             </p>
@@ -249,7 +249,7 @@ export function LandingPage({ onStartBooking }: { onStartBooking: () => void }) 
           <div className="col-span-2">
             <div className="flex items-center gap-2 text-white mb-6">
               <Sparkles size={24} className="text-primary" />
-              <span className="text-xl font-bold tracking-tight">BinFresh</span>
+              <span className="text-xl font-bold tracking-tight">CleanBinSolutions</span>
             </div>
             <p className="max-w-sm mb-6">
               Making neighborhoods cleaner and fresher, one bin at a time. Our eco-friendly process ensures your home stays healthy and odor-free.
@@ -281,7 +281,7 @@ export function LandingPage({ onStartBooking }: { onStartBooking: () => void }) 
           </div>
         </div>
         <div className="max-w-7xl mx-auto mt-12 pt-12 border-t border-slate-900 text-center text-xs">
-          <p>© 2026 BinFresh Professional Services. All rights reserved.</p>
+          <p>© 2026 CleanBinSolutions Professional Services. All rights reserved.</p>
         </div>
       </footer>
     </div>
