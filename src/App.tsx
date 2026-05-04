@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import * as React from "react";
 import { LandingPage } from "./components/LandingPage";
 import { BookingForm } from "./components/BookingForm";
