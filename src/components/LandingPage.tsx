@@ -8,34 +8,26 @@ import {
   Check,
   Star,
   Droplets,
-  Wind
+  Wind,
+  MapPin
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import logo from "../assets/logo.png";
 
-export function LandingPage({ onStartBooking }: { onStartBooking: () => void }) {
+export function LandingPage({ onStartBooking, onChoosePlan }: { onStartBooking: () => void; onChoosePlan: (plan: string) => void }) {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white">
-              <Sparkles size={24} />
-            </div>
-            <span className="text-xl font-bold tracking-tight">CleanBinSolutions</span>
+        <div className="max-w-7xl mx-auto px-4 h-24 flex items-center justify-center">
+          <div className="flex items-center gap-4">
+            <img src={logo} alt="CleanBinSolutions Logo" className="w-16 h-16 object-contain bg-white rounded-xl shadow-sm p-1" />
+            <span className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">CleanBinSolutions</span>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-            <a href="#features" className="hover:text-primary transition-colors">Features</a>
-            <a href="#pricing" className="hover:text-primary transition-colors">Pricing</a>
-            <a href="#how-it-works" className="hover:text-primary transition-colors">How it Works</a>
-          </div>
-          <Button onClick={onStartBooking} size="sm" className="rounded-full px-6">
-            Book Now
-          </Button>
         </div>
       </nav>
 
@@ -48,7 +40,7 @@ export function LandingPage({ onStartBooking }: { onStartBooking: () => void }) 
             transition={{ duration: 0.5 }}
           >
             <Badge variant="secondary" className="mb-4 py-1 px-4 rounded-full text-primary font-semibold">
-              #1 Rated Bin Cleaning Service
+              #1 Rated Local Bin Cleaning Service
             </Badge>
             <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6">
               Stop Holding Your <span className="text-primary">Breath.</span>
@@ -60,29 +52,16 @@ export function LandingPage({ onStartBooking }: { onStartBooking: () => void }) 
               <Button onClick={onStartBooking} size="lg" className="h-14 px-8 text-lg rounded-full shadow-lg shadow-primary/20">
                 Start My Service <ArrowRight className="ml-2" size={20} />
               </Button>
-              <Button variant="outline" size="lg" className="h-14 px-8 text-lg rounded-full">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="h-14 px-8 text-lg rounded-full"
+                onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+              >
                 View Pricing
               </Button>
             </div>
-            <div className="mt-8 flex items-center gap-4">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <img
-                    key={i}
-                    src={`https://picsum.photos/seed/user${i}/100/100`}
-                    alt="User"
-                    className="w-10 h-10 rounded-full border-2 border-white"
-                    referrerPolicy="no-referrer"
-                  />
-                ))}
-              </div>
-              <div className="text-sm">
-                <div className="flex text-yellow-500 mb-0.5">
-                  {[1, 2, 3, 4, 5].map((i) => <Star key={i} size={14} fill="currentColor" />)}
-                </div>
-                <p className="text-muted-foreground font-medium">Trusted by 2,000+ local families</p>
-              </div>
-            </div>
+
           </motion.div>
 
           <motion.div
@@ -130,7 +109,7 @@ export function LandingPage({ onStartBooking }: { onStartBooking: () => void }) 
               We've perfected the art of bin cleaning with our specialized high-pressure equipment and eco-friendly solutions.
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
                 icon: <Sparkles className="text-primary" />,
@@ -146,6 +125,11 @@ export function LandingPage({ onStartBooking }: { onStartBooking: () => void }) 
                 icon: <Clock className="text-primary" />,
                 title: "Reliable Schedule",
                 description: "We arrive on your trash collection day, so your bins are empty and ready."
+              },
+              {
+                icon: <MapPin className="text-primary" />,
+                title: "Local Trusted Service",
+                description: "Proudly serving Moorpark as a trusted local community business."
               }
             ].map((feature, i) => (
               <Card key={i} className="border-none shadow-sm hover:shadow-md transition-shadow">
@@ -168,75 +152,136 @@ export function LandingPage({ onStartBooking }: { onStartBooking: () => void }) 
       <section id="pricing" className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-5xl font-bold mb-4">Simple, Transparent Pricing</h2>
+            <h2 className="text-3xl lg:text-5xl font-bold mb-4">Simple Plans. Fresh Bins.</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-              Choose the plan that fits your household needs. No contracts, cancel anytime.
+              Eco-friendly cleaning with organic essential oils. No contracts, no hidden fees — ever.
             </p>
+            <div className="mt-4 inline-flex items-center gap-2 bg-primary text-white text-sm font-semibold px-5 py-2 rounded-full">
+              🌿 <span className="text-green-200">First cleaning is on us</span> — free for new subscribers
+            </div>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 items-start">
             {[
               {
-                name: "Monthly",
-                price: "25",
+                tag: "Every 4 Weeks",
+                name: "Essential",
+                freq: "Cleaned once a month, after Wednesday pickup",
+                price: "19.99",
                 period: "per month",
-                description: "Our most popular plan for busy families.",
-                features: ["1 Clean per month", "Up to 2 bins", "Eco-friendly sanitization", "Deodorizing spray"],
+                features: [
+                  "Up to 3 bins included",
+                  "100% organic eco clean",
+                  "Premium deodorizing treatment",
+                  "Choose from 3 organic essential oil scents",
+                  "Optional bin sticker"
+                ],
+                popular: false
+              },
+              {
+                tag: "Every 2 Weeks",
+                name: "Fresh",
+                freq: "Cleaned twice a month, after every other pickup",
+                price: "34.99",
+                period: "per month",
+                features: [
+                  "Up to 3 bins included",
+                  "100% organic eco clean",
+                  "Premium deodorizing treatment",
+                  "Choose from 3 organic essential oil scents",
+                  "Optional bin sticker"
+                ],
                 popular: true
               },
               {
-                name: "Weekly",
-                price: "15",
-                period: "per week",
-                description: "Maximum freshness for large households.",
-                features: ["Weekly cleaning", "Up to 3 bins", "Premium deodorizing", "Priority scheduling"],
-                popular: false
-              },
-              {
-                name: "One-Time",
-                price: "45",
-                period: "per visit",
-                description: "Perfect for a seasonal deep clean.",
-                features: ["Single deep clean", "Up to 2 bins", "Full sanitization", "No commitment"],
+                tag: "No Commitment",
+                name: "One-Time Clean",
+                freq: "Single visit — try us before you subscribe",
+                price: "44.99",
+                period: "one time",
+                features: [
+                  "Up to 3 bins included",
+                  "100% organic eco clean",
+                  "Premium deodorizing treatment",
+                  "Choose from 3 organic essential oil scents",
+                  "Optional bin sticker"
+                ],
                 popular: false
               }
             ].map((plan, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className={cn(
-                  "relative p-8 rounded-3xl border transition-all",
-                  plan.popular ? "border-primary shadow-xl shadow-primary/5 scale-105 z-10 bg-white" : "bg-white"
+                  "relative p-8 rounded-3xl border-2 transition-all",
+                  plan.popular
+                    ? "border-primary bg-slate-900 text-white shadow-2xl shadow-primary/20 scale-105 z-10"
+                    : "border-border bg-white"
                 )}
               >
                 {plan.popular && (
-                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1">
-                    Most Popular
+                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-amber-400 text-slate-900 hover:bg-amber-400">
+                    ⭐ Most Popular
                   </Badge>
                 )}
-                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-extrabold">${plan.price}</span>
-                  <span className="text-muted-foreground">{plan.period}</span>
-                </div>
-                <p className="text-muted-foreground mb-8 text-sm">
-                  {plan.description}
+                <p className={cn("text-xs font-bold uppercase tracking-widest mb-1", plan.popular ? "text-green-300" : "text-primary")}>
+                  {plan.tag}
                 </p>
-                <div className="space-y-4 mb-8">
+                <h3 className="text-2xl font-bold mb-1">{plan.name}</h3>
+                <p className={cn("text-sm mb-6", plan.popular ? "text-green-200" : "text-muted-foreground")}>
+                  {plan.freq}
+                </p>
+                <div className="space-y-3 mb-8">
                   {plan.features.map((f, j) => (
                     <div key={j} className="flex items-center gap-3 text-sm">
-                      <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                        <Check size={12} />
+                      <div className={cn("w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0", plan.popular ? "bg-white/10" : "bg-green-100")}>
+                        <Check size={12} className={plan.popular ? "text-green-300" : "text-green-600"} />
                       </div>
-                      {f}
+                      <span className={plan.popular ? "text-white/80" : ""}>{f}</span>
                     </div>
                   ))}
                 </div>
-                <Button 
-                  onClick={onStartBooking}
-                  variant={plan.popular ? "default" : "outline"} 
+                <div className="flex items-baseline gap-1 mb-2">
+                  <span className={cn("text-5xl font-extrabold", plan.popular ? "text-white" : "text-slate-900")}>
+                    ${plan.price}
+                  </span>
+                  <span className={cn("text-sm", plan.popular ? "text-white/50" : "text-muted-foreground")}>
+                    {plan.period}
+                  </span>
+                </div>
+                <p className={cn("text-xs mb-6 inline-block px-3 py-1 rounded-full", plan.popular ? "bg-white/10 text-white/60" : "bg-muted text-muted-foreground")}>
+                  +$10 per extra bin
+                </p>
+                <Button
+                  onClick={() => onChoosePlan(plan.name)}
+                  variant={plan.popular ? "default" : "outline"}
                   className="w-full h-12 rounded-full"
                 >
                   Choose {plan.name}
                 </Button>
+              </div>
+            ))}
+          </div>
+
+          {/* Scent options */}
+          <div className="text-center mt-12">
+            <p className="font-semibold text-slate-800 mb-3">Choose from 3 organic essential oil scents</p>
+            <div className="flex justify-center gap-3 flex-wrap">
+              {["🍋 Lemon", "🌿 Mint", "💜 Lavender"].map(s => (
+                <span key={s} className="bg-white border border-border rounded-full px-4 py-1.5 text-sm font-medium">{s}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Trust row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10 p-8 bg-white rounded-2xl border">
+            {[
+              { icon: <ShieldCheck size={16} />, label: "No contracts" },
+              { icon: <Check size={16} />, label: "No hidden fees" },
+              { icon: <Star size={16} />, label: "Cancel anytime" },
+              { icon: <Sparkles size={16} />, label: "Eco-friendly & organic" },
+            ].map((t, i) => (
+              <div key={i} className="flex items-center gap-2 text-sm font-medium text-muted-foreground justify-center">
+                <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">{t.icon}</div>
+                {t.label}
               </div>
             ))}
           </div>
@@ -248,18 +293,13 @@ export function LandingPage({ onStartBooking }: { onStartBooking: () => void }) 
         <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-12">
           <div className="col-span-2">
             <div className="flex items-center gap-2 text-white mb-6">
-              <Sparkles size={24} className="text-primary" />
+              <img src={logo} alt="CleanBinSolutions Logo" className="w-10 h-10 object-contain bg-white rounded-md p-0.5" />
               <span className="text-xl font-bold tracking-tight">CleanBinSolutions</span>
             </div>
             <p className="max-w-sm mb-6">
               Making neighborhoods cleaner and fresher, one bin at a time. Our eco-friendly process ensures your home stays healthy and odor-free.
             </p>
-            <div className="flex gap-4">
-              {/* Social Icons Placeholder */}
-              <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-primary hover:text-white transition-colors cursor-pointer">
-                <Trash2 size={18} />
-              </div>
-            </div>
+
           </div>
           <div>
             <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">Company</h4>
