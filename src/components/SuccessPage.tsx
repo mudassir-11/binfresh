@@ -159,9 +159,19 @@ export function SuccessPage({ onReturn }: { onReturn: () => void }) {
             className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-xl mb-6 text-sm text-blue-700"
           >
             <RotateCcw size={16} className="mt-0.5 flex-shrink-0 text-blue-500" />
-            <p>
-              Your subscription renews monthly. You can cancel anytime — just email us or log into your account.
-            </p>
+            <div className="flex flex-col gap-2">
+              <p>
+                Your subscription renews monthly. You can cancel anytime — just email us or manage your account online.
+              </p>
+              <a 
+                href={import.meta.env.VITE_STRIPE_PORTAL_URL || "#"} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 hover:text-blue-900 mt-1"
+              >
+                Manage Subscription &rarr;
+              </a>
+            </div>
           </motion.div>
         )}
 

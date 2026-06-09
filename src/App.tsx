@@ -2,12 +2,14 @@ import * as React from "react";
 import { LandingPage } from "./components/LandingPage";
 import { BookingForm } from "./components/BookingForm";
 import { SuccessPage } from "./components/SuccessPage";
+import { AdminPortal } from "./components/AdminPortal";
 import { motion, AnimatePresence } from "motion/react";
 
-type View = "landing" | "booking" | "success" | "canceled";
+type View = "landing" | "booking" | "success" | "canceled" | "admin";
 
 function getInitialView(): View {
   const params = new URLSearchParams(window.location.search);
+  if (params.get("admin") === "true") return "admin";
   if (params.get("success") === "true") return "success";
   if (params.get("canceled") === "true") return "canceled";
   return "landing";
@@ -95,6 +97,18 @@ export default function App() {
                 Try Again
               </button>
             </div>
+          </motion.div>
+        )}
+
+        {view === "admin" && (
+          <motion.div
+            key="admin"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <AdminPortal />
           </motion.div>
         )}
 

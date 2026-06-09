@@ -48,7 +48,7 @@ export function LandingPage({ onStartBooking, onChoosePlan }: { onStartBooking: 
             <p className="text-xl text-muted-foreground mb-8 max-w-lg leading-relaxed">
               We professionally clean, sanitize, and deodorize your garbage bins so you don't have to deal with the smell, bacteria, or pests.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
               <Button onClick={onStartBooking} size="lg" className="h-14 px-8 text-lg rounded-full shadow-lg shadow-primary/20">
                 Start My Service <ArrowRight className="ml-2" size={20} />
               </Button>
@@ -61,6 +61,9 @@ export function LandingPage({ onStartBooking, onChoosePlan }: { onStartBooking: 
                 View Pricing
               </Button>
             </div>
+            <p className="text-sm text-muted-foreground">
+              Already a customer? <a href={import.meta.env.VITE_STRIPE_PORTAL_URL || "#"} target="_blank" rel="noopener noreferrer" className="text-primary font-semibold hover:underline">Manage your subscription</a>
+            </p>
 
           </motion.div>
 
@@ -315,6 +318,7 @@ export function LandingPage({ onStartBooking, onChoosePlan }: { onStartBooking: 
             <ul className="space-y-4 text-sm">
               <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
               <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
+              <li><a href={import.meta.env.VITE_STRIPE_PORTAL_URL || "#"} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors text-primary font-medium">Manage Subscription</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Service Areas</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
             </ul>

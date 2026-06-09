@@ -100,22 +100,15 @@ ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.service_jobs ENABLE ROW LEVEL SECURITY;
 
--- Allow SELECT for all (anon key can read)
-CREATE POLICY "Allow SELECT customers" ON public.customers FOR SELECT USING (true);
+-- Allow SELECT for all ONLY for plans (so frontend can read pricing if needed)
 CREATE POLICY "Allow SELECT plans" ON public.plans FOR SELECT USING (true);
-CREATE POLICY "Allow SELECT subscriptions" ON public.subscriptions FOR SELECT USING (true);
-CREATE POLICY "Allow SELECT bookings" ON public.bookings FOR SELECT USING (true);
-CREATE POLICY "Allow SELECT service_jobs" ON public.service_jobs FOR SELECT USING (true);
 
--- Allow INSERT for all (anon key can create records after payment)
-CREATE POLICY "Allow INSERT customers" ON public.customers FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow INSERT plans" ON public.plans FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow INSERT subscriptions" ON public.subscriptions FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow INSERT bookings" ON public.bookings FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow INSERT service_jobs" ON public.service_jobs FOR INSERT WITH CHECK (true);
+-- Require authentication for SELECTing customer data
+CREATE POLICY "Allow SELECT customers" ON public.customers FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow SELECT subscriptions" ON public.subscriptions FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow SELECT bookings" ON public.bookings FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow SELECT service_jobs" ON public.service_jobs FOR SELECT USING (auth.role() = 'authenticated');
 
--- Allow UPDATE (for webhook to update statuses)
-CREATE POLICY "Allow UPDATE customers" ON public.customers FOR UPDATE USING (true);
-CREATE POLICY "Allow UPDATE subscriptions" ON public.subscriptions FOR UPDATE USING (true);
-CREATE POLICY "Allow UPDATE bookings" ON public.bookings FOR UPDATE USING (true);
-CREATE POLICY "Allow UPDATE service_jobs" ON public.service_jobs FOR UPDATE USING (true);
+-- We REMOVE public INSERT/UPDATE policies entirely.
+-- The API routes (webhook and create-checkout) use the SUPABASE_SERVICE_ROLE_KEY, 
+-- which automatically bypasses RLS and can insert/update records securely.
