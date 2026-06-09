@@ -1,6 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
+import { getBookingConfirmationEmailHTML } from './emailTemplates';
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-05-28.basil' as any,
@@ -107,8 +111,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               .eq('id', customerId);
           }
 
+          // ── Send Email Confirmation via Resend ─────────────────────────────
+          if (resend && session.customer_details?.email) {
+            const customerEmail = session.customer_details.email;
+            const customerName = session.customer_details.name?.split(' ')[0] || 'Customer';
+            const portalUrl = process.env.VITE_STRIPE_PORTAL_URL || 'https://cleanbinsolutions.us';
+
+            const htmlContent = getBookingConfirmationEmailHTML({
+              name: customerName,
+              planName: meta.plan_name ?? 'One-Time Clean',
+              binCount,
+              scent: meta.scent ?? 'Lemon',
+              serviceDate,
+              isSubscription: session.mode === 'subscription',
+              portalUrl,
+            });
+
+            await resend.emails.send({
+              from: 'CleanBinSolutions <hello@cleanbinsolutions.us>',
+              to: [customerEmail],
+              subject: 'Your booking is confirmed! 🎉',
+              html: htmlContent,
+            });
+            console.log(`[webhook] ✉️ Confirmation email sent to ${customerEmail}`);
+          } else if (!resend) {
+            console.log('[webhook] ⚠️ Resend not configured — skipping email');
+          }
+
         } catch (dbErr) {
-          console.warn('[webhook] DB write failed (non-fatal):', dbErr);
+          console.warn('[webhook] Error processing checkout completion:', dbErr);
         }
         break;
       }
