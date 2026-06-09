@@ -23,16 +23,25 @@ export function AdminPortal() {
   const [dataLoading, setDataLoading] = React.useState(false);
 
   React.useEffect(() => {
-    supabase?.auth.getSession().then(({ data: { session } }) => {
+    if (!supabase) {
+      setAuthError("Supabase environment variables are missing. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to Vercel.");
+      setLoading(false);
+      return;
+    }
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
       if (session) fetchData();
+    }).catch(err => {
+      console.error(err);
+      setLoading(false);
     });
 
-    const { data: { subscription } } = supabase?.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (session) fetchData();
-    }) ?? { data: { subscription: null } };
+    });
 
     return () => subscription?.unsubscribe();
   }, []);
