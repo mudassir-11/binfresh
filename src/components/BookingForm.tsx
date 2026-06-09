@@ -25,12 +25,6 @@ import { motion, AnimatePresence } from "motion/react";
 // ─── Service Area Configuration ──────────────────────────────────────────────
 const SUPPORTED_ZIPS: Record<string, string> = {
   "93021": "Moorpark, CA",
-  "93063": "Simi Valley, CA",
-  "93065": "Simi Valley, CA",
-  "91320": "Newbury Park, CA",
-  "91360": "Thousand Oaks, CA",
-  "91361": "Thousand Oaks, CA",
-  "91362": "Thousand Oaks, CA",
 };
 
 type ZipStatus = "idle" | "valid" | "invalid";
@@ -559,7 +553,7 @@ export function BookingForm({ onBack, selectedPlan }: { onBack: () => void; sele
                         <div>
                           <p className="font-semibold text-red-700 text-sm">Outside Service Area</p>
                           <p className="text-red-600 text-sm">
-                            Sorry, we currently only service Moorpark, Simi Valley, and Thousand Oaks, CA. We're expanding — check back soon!
+                            Sorry, we currently only service Moorpark, CA. We're expanding — check back soon!
                           </p>
                         </div>
                       </div>
@@ -571,7 +565,7 @@ export function BookingForm({ onBack, selectedPlan }: { onBack: () => void; sele
                 {zipStatus === "idle" && (
                   <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/60 rounded-lg px-3 py-2">
                     <MapPin size={12} className="text-primary" />
-                    <span>We currently serve <strong>Moorpark</strong>, <strong>Simi Valley</strong>, and <strong>Thousand Oaks / Newbury Park</strong></span>
+                    <span>We currently serve <strong>Moorpark, CA</strong> (ZIP: 93021)</span>
                   </div>
                 )}
 
