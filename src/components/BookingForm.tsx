@@ -648,7 +648,7 @@ export function BookingForm({ onBack, selectedPlan }: { onBack: () => void; sele
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 bg-muted rounded-lg">
                     <p className="text-xs text-muted-foreground uppercase font-bold mb-1">Plan</p>
-                    <p className="font-medium">{planInfo?.label ?? `${bookingData.serviceType} Cleaning`}</p>
+                    <p className="font-medium capitalize">{planInfo?.label ?? `${bookingData.serviceType} Cleaning`}</p>
                   </div>
                   <div className="p-4 bg-muted rounded-lg">
                     <p className="text-xs text-muted-foreground uppercase font-bold mb-1">Bins</p>

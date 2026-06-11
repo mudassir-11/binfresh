@@ -164,10 +164,10 @@ export function SuccessPage({ onReturn }: { onReturn: () => void }) {
                 Your subscription renews monthly. You can cancel anytime — just email us or manage your account online.
               </p>
               <a 
-                href={import.meta.env.VITE_STRIPE_PORTAL_URL || "#"} 
+                href="https://billing.stripe.com/p/login/fZu28sgEg4OL5W06C73Ru00" 
                 target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-blue-800 hover:text-blue-900 mt-1"
+                rel="noopener noreferrer" 
+                className="px-6 py-3 bg-white text-primary border-2 border-primary rounded-xl font-bold hover:bg-slate-50 transition-colors inline-flex items-center gap-2"
               >
                 Manage Subscription &rarr;
               </a>

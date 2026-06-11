@@ -3,15 +3,24 @@ import { LandingPage } from "./components/LandingPage";
 import { BookingForm } from "./components/BookingForm";
 import { SuccessPage } from "./components/SuccessPage";
 import { AdminPortal } from "./components/AdminPortal";
+import { ReviewForm } from "./components/ReviewForm";
+import { AboutPage, ContactPage, FAQPage, ServiceAreaPage, LegalPages } from "./components/InfoPages";
 import { motion, AnimatePresence } from "motion/react";
 
-type View = "landing" | "booking" | "success" | "canceled" | "admin";
+type View = "landing" | "booking" | "success" | "canceled" | "admin" | "review" | "about" | "contact" | "faq" | "areas" | "terms" | "privacy";
 
 function getInitialView(): View {
   const params = new URLSearchParams(window.location.search);
   if (params.get("admin") === "true") return "admin";
+  if (params.get("review") === "true") return "review";
   if (params.get("success") === "true") return "success";
   if (params.get("canceled") === "true") return "canceled";
+  
+  const page = params.get("page");
+  if (page && ["about", "contact", "faq", "areas", "terms", "privacy"].includes(page)) {
+    return page as View;
+  }
+  
   return "landing";
 }
 
@@ -109,6 +118,35 @@ export default function App() {
             transition={{ duration: 0.3 }}
           >
             <AdminPortal />
+          </motion.div>
+        )}
+
+        {view === "review" && (
+          <motion.div
+            key="review"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <ReviewForm />
+          </motion.div>
+        )}
+
+        {["about", "contact", "faq", "areas", "terms", "privacy"].includes(view) && (
+          <motion.div
+            key={view}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            {view === "about" && <AboutPage />}
+            {view === "contact" && <ContactPage />}
+            {view === "faq" && <FAQPage />}
+            {view === "areas" && <ServiceAreaPage />}
+            {view === "terms" && <LegalPages type="terms" />}
+            {view === "privacy" && <LegalPages type="privacy" />}
           </motion.div>
         )}
 

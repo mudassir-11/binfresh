@@ -112,3 +112,43 @@ CREATE POLICY "Allow SELECT service_jobs" ON public.service_jobs FOR SELECT USIN
 -- We REMOVE public INSERT/UPDATE policies entirely.
 -- The API routes (webhook and create-checkout) use the SUPABASE_SERVICE_ROLE_KEY, 
 -- which automatically bypasses RLS and can insert/update records securely.
+
+-- 6. reviews: Customer ratings and feedback
+CREATE TABLE public.reviews (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    customer_name TEXT NOT NULL,
+    rating INTEGER CHECK (rating >= 1 AND rating <= 5) NOT NULL,
+    comment TEXT,
+    photo_url TEXT,
+    status TEXT CHECK (status IN ('pending', 'approved', 'rejected')) DEFAULT 'pending',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+COMMENT ON TABLE public.reviews IS 'Stores customer reviews, ratings, and optional photos.';
+
+ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
+
+-- Allow public to submit reviews
+CREATE POLICY "Allow public INSERT reviews" ON public.reviews FOR INSERT WITH CHECK (true);
+
+-- Allow public to see only approved reviews
+CREATE POLICY "Allow public SELECT approved reviews" ON public.reviews FOR SELECT USING (status = 'approved');
+
+-- Allow authenticated (admin) to see and update all reviews
+CREATE POLICY "Allow auth SELECT all reviews" ON public.reviews FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow auth UPDATE reviews" ON public.reviews FOR UPDATE USING (auth.role() = 'authenticated');
+
+-- 7. Storage: review-photos bucket
+-- Note: You might need to create the bucket manually in the Supabase Dashboard UI if this fails.
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('review-photos', 'review-photos', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Storage Policies
+-- Allow public to upload photos
+CREATE POLICY "Allow public uploads" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'review-photos');
+
+-- Allow public to view photos
+CREATE POLICY "Allow public viewing" ON storage.objects FOR SELECT USING (bucket_id = 'review-photos');
+
+-- Allow admin to delete/update photos
+CREATE POLICY "Allow auth delete/update" ON storage.objects FOR ALL USING (auth.role() = 'authenticated' AND bucket_id = 'review-photos');

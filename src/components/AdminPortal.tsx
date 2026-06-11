@@ -1,6 +1,6 @@
 import * as React from "react";
 import { supabase } from "../lib/supabase";
-import { Loader2, Users, Calendar, Repeat, LogOut, Search } from "lucide-react";
+import { Loader2, Users, Calendar, Repeat, LogOut, Search, Star, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,10 +16,11 @@ export function AdminPortal() {
   const [authError, setAuthError] = React.useState("");
 
   // Data state
-  const [activeTab, setActiveTab] = React.useState<"overview" | "customers" | "subscriptions" | "bookings">("overview");
+  const [activeTab, setActiveTab] = React.useState<"overview" | "customers" | "subscriptions" | "bookings" | "reviews">("overview");
   const [customers, setCustomers] = React.useState<any[]>([]);
   const [subscriptions, setSubscriptions] = React.useState<any[]>([]);
   const [bookings, setBookings] = React.useState<any[]>([]);
+  const [reviews, setReviews] = React.useState<any[]>([]);
   const [dataLoading, setDataLoading] = React.useState(false);
 
   React.useEffect(() => {
@@ -51,19 +52,31 @@ export function AdminPortal() {
     try {
       if (!supabase) return;
 
-      const [custRes, subRes, bookRes] = await Promise.all([
+      const [custRes, subRes, bookRes, reviewRes] = await Promise.all([
         supabase.from('customers').select('*').order('created_at', { ascending: false }),
         supabase.from('subscriptions').select('*, customers(first_name, last_name, email, phone)').order('created_at', { ascending: false }),
-        supabase.from('bookings').select('*, customers(first_name, last_name, email, phone)').order('service_date', { ascending: true })
+        supabase.from('bookings').select('*, customers(first_name, last_name, email, phone)').order('service_date', { ascending: true }),
+        supabase.from('reviews').select('*').order('created_at', { ascending: false })
       ]);
 
       setCustomers(custRes.data || []);
       setSubscriptions(subRes.data || []);
       setBookings(bookRes.data || []);
+      setReviews(reviewRes.data || []);
     } catch (err) {
       console.error("Error fetching admin data:", err);
     } finally {
       setDataLoading(false);
+    }
+  };
+
+  const handleUpdateReviewStatus = async (id: string, status: 'approved' | 'rejected') => {
+    if (!supabase) return;
+    const { error } = await supabase.from('reviews').update({ status }).eq('id', id);
+    if (!error) {
+      setReviews(reviews.map(r => r.id === id ? { ...r, status } : r));
+    } else {
+      alert("Failed to update review status: " + error.message);
     }
   };
 
@@ -150,6 +163,12 @@ export function AdminPortal() {
           >
             <Calendar size={18} /> One-Time Bookings <span className="ml-auto text-xs opacity-70">{bookings.length}</span>
           </button>
+          <button 
+            onClick={() => setActiveTab("reviews")}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'reviews' ? 'bg-primary text-primary-foreground' : 'text-slate-600 hover:bg-slate-100'}`}
+          >
+            <Star size={18} /> Reviews <span className="ml-auto text-xs opacity-70">{reviews.length}</span>
+          </button>
         </nav>
 
         {/* Main Content */}
@@ -176,6 +195,10 @@ export function AdminPortal() {
                     <div className="p-6 bg-purple-50 text-purple-900 rounded-xl border border-purple-100">
                       <p className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-80">One-Time Bookings</p>
                       <p className="text-4xl font-extrabold">{bookings.length}</p>
+                    </div>
+                    <div className="p-6 bg-amber-50 text-amber-900 rounded-xl border border-amber-100">
+                      <p className="text-sm font-semibold uppercase tracking-wider mb-2 opacity-80">Pending Reviews</p>
+                      <p className="text-4xl font-extrabold">{reviews.filter(r => r.status === 'pending').length}</p>
                     </div>
                   </div>
                 </div>
@@ -301,6 +324,66 @@ export function AdminPortal() {
                         )}
                       </tbody>
                     </table>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "reviews" && (
+                <div>
+                  <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
+                  <div className="space-y-4">
+                    {reviews.length === 0 ? (
+                      <div className="text-center py-12 text-muted-foreground border rounded-xl bg-slate-50">
+                        No reviews yet.
+                      </div>
+                    ) : (
+                      reviews.map(r => (
+                        <div key={r.id} className="border rounded-xl p-6 bg-white shadow-sm flex flex-col md:flex-row gap-6">
+                          {r.photo_url && (
+                            <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                              <img src={r.photo_url} alt="Review" className="w-full h-full object-cover" />
+                            </div>
+                          )}
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-2">
+                              <div>
+                                <h3 className="font-bold text-lg">{r.customer_name}</h3>
+                                <div className="text-sm text-muted-foreground">{format(new Date(r.created_at), 'MMM d, yyyy')}</div>
+                              </div>
+                              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                r.status === 'approved' ? 'bg-green-100 text-green-700' :
+                                r.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                              }`}>
+                                {r.status.toUpperCase()}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1 mb-3">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} className={`w-4 h-4 ${i < r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-slate-200'}`} />
+                              ))}
+                            </div>
+                            <p className="text-slate-700 italic">"{r.comment}"</p>
+                          </div>
+                          
+                          {r.status === 'pending' && (
+                            <div className="flex flex-row md:flex-col gap-2 justify-center md:border-l md:pl-6 pt-4 md:pt-0">
+                              <Button 
+                                onClick={() => handleUpdateReviewStatus(r.id, 'approved')}
+                                className="bg-green-600 hover:bg-green-700" size="sm"
+                              >
+                                <CheckCircle className="w-4 h-4 mr-2" /> Approve
+                              </Button>
+                              <Button 
+                                onClick={() => handleUpdateReviewStatus(r.id, 'rejected')}
+                                variant="outline" className="text-red-600 hover:bg-red-50 hover:text-red-700" size="sm"
+                              >
+                                <XCircle className="w-4 h-4 mr-2" /> Reject
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               )}
